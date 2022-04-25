@@ -83,7 +83,7 @@ extern jmp_buf __eSimple_errStack[SIMPLE_MAXERRORS];
 } while(0);
 #else
 # define SIMPLE_ERROR(status, ...) do { \
-    fprintf(stderr__VA_ARGS__); \
+    fprintf(stderr, __VA_ARGS__); \
     if (SIMPLE_ISPROTECTED) \
         longjmp(__eSimple_errStack[__eSimple_errIndx], 1); \
     else \
