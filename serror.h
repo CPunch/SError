@@ -24,6 +24,7 @@
     int main() {
         SIMPLE_TRY
             puts("Hel");
+            try();
         SIMPLE_CATCH
             puts("ld!");
         SIMPLE_TRYEND
