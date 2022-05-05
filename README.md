@@ -17,12 +17,13 @@ Example:
 
 void try() {
     puts("lo ");
-    SIMPLE_ERROR(0, "Wor");
+    SIMPLE_ERROR(1, "Wor");
     puts("never called\n");
 }
 
 int main() {
-    SIMPLE_TRY
+    int errCode;
+    SIMPLE_TRY(errCode)
         puts("Hel");
         try();
     SIMPLE_CATCH
