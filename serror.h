@@ -22,7 +22,8 @@
     }
 
     int main() {
-        SIMPLE_TRY
+        int errCode;
+        SIMPLE_TRY(errCode)
             puts("Hel");
             try();
         SIMPLE_CATCH
@@ -62,14 +63,18 @@ extern jmp_buf __eSimple_errStack[SIMPLE_MAXERRORS];
 #endif
 
 /* DO NOT RETURN/GOTO/BREAK or otherwise skip SIMPLE_TRYEND */
-#define SIMPLE_TRY if (setjmp(__eSimple_errStack[++__eSimple_errIndx]) == 0) {
+#define SIMPLE_TRY(errCode) if ((errCode = setjmp(__eSimple_errStack[++__eSimple_errIndx])) == 0) {
 #define SIMPLE_CATCH } else {
 #define SIMPLE_TRYEND } --__eSimple_errIndx;
 
 /* if __eSimple_errIndx is >= 0, we have a safe spot to jump too if an error is thrown */
 #define SIMPLE_ISPROTECTED (__eSimple_errIndx >= 0)
 
-/* SIMPLE_ERROR(printf args):
+#ifndef __func__
+# define __func__ "unknn"
+#endif
+
+/* SIMPLE_ERROR(errcode, printf args):
         if called after a SIMPLE_TRY block will jump to the previous SIMPLE_CATCH/SIMPLE_TRYEND block,
     otherwise exit(status) is called. fprintf(stderr, FORMAT, ...) is called with passed args. if SIMPLE_QUITE is defined 
     arguments are ignored.
@@ -77,15 +82,15 @@ extern jmp_buf __eSimple_errStack[SIMPLE_MAXERRORS];
 #ifdef SIMPLE_QUITE
 # define SIMPLE_ERROR(status, ...) do { \
     if (SIMPLE_ISPROTECTED) \
-        longjmp(__eSimple_errStack[__eSimple_errIndx], 1); \
+        longjmp(__eSimple_errStack[__eSimple_errIndx], status); \
     else \
         exit(status); \
 } while(0);
 #else
 # define SIMPLE_ERROR(status, ...) do { \
-    fprintf(stderr, __VA_ARGS__); \
+    fprintf(stderr, __FILE__ ":" __LINE_STRING__  " [ERROR] " __func__ "(): " __VA_ARGS__); \
     if (SIMPLE_ISPROTECTED) \
-        longjmp(__eSimple_errStack[__eSimple_errIndx], 1); \
+        longjmp(__eSimple_errStack[__eSimple_errIndx], status); \
     else \
         exit(status); \
 } while(0);
