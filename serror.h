@@ -46,6 +46,7 @@
 #define SIMPLE_ERROR_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <setjmp.h>
 
 /* defines errorstack size */
@@ -69,6 +70,10 @@ extern jmp_buf __eSimple_errStack[SIMPLE_MAXERRORS];
 
 /* if __eSimple_errIndx is >= 0, we have a safe spot to jump too if an error is thrown */
 #define SIMPLE_ISPROTECTED (__eSimple_errIndx >= 0)
+
+#define __STRINGIZE(x) __STRINGIZE2(x)
+#define __STRINGIZE2(x) #x
+#define __LINE_STRING__ __STRINGIZE(__LINE__)
 
 #ifndef __func__
 # define __func__ "unknn"
