@@ -17,7 +17,7 @@
 
     void try() {
         puts("lo ");
-        SIMPLE_ERROR(0, "Wor");
+        SIMPLE_ERROR(1, "Wor");
         puts("never called\n");
     }
 
